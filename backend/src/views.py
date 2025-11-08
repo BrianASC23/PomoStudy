@@ -1,7 +1,7 @@
 from flask import Blueprint, request, send_file, abort, make_response
-from backend.src.main import csrf
+from main import csrf
 from pathlib import Path
-from backend.src.elevenz import start_sound, end_sound, to_voice_settings
+from elevenz import start_sound, end_sound, to_voice_settings
 
 views = Blueprint("views", __name__)
 
