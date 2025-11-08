@@ -1,16 +1,7 @@
 import { ConfigurationPanel } from '../components/ConfigurationPanel';
 import { Button } from '../components/ui/button';
 import { ArrowLeft, Brain } from 'lucide-react';
-import type { Flashcard } from '../components/FlashcardViewer';
-
-interface StudySettings {
-  workDuration: number;
-  shortBreakDuration: number;
-  longBreakDuration: number;
-  flashcards: Flashcard[];
-  audioUrl: string | null;
-  voiceEnabled: boolean;
-}
+import type { StudySettings } from '../types/settings';
 
 interface SettingsProps {
   settings: StudySettings;
@@ -51,6 +42,7 @@ export function Settings({ settings, onSettingsChange, onNavigate }: SettingsPro
           shortBreakDuration={settings.shortBreakDuration}
           longBreakDuration={settings.longBreakDuration}
           flashcards={settings.flashcards}
+          voiceSettings={settings.voiceSettings}
           onWorkDurationChange={(value) =>
             onSettingsChange({ ...settings, workDuration: value })
           }
@@ -65,6 +57,9 @@ export function Settings({ settings, onSettingsChange, onNavigate }: SettingsPro
           }
           onAudioUpload={(audioUrl) =>
             onSettingsChange({ ...settings, audioUrl })
+          }
+          onVoiceSettingsChange={(voiceSettings) =>
+            onSettingsChange({ ...settings, voiceSettings })
           }
         />
       </div>
