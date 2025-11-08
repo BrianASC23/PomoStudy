@@ -1,5 +1,6 @@
 from flask import Blueprint, request, session, send_file, abort, jsonify
 import hashlib, os
+from pathlib import Path
 
 views = Blueprint("views",__name__)
 
@@ -9,9 +10,10 @@ views = Blueprint("views",__name__)
 def start_session():
     data = request.get_json(silent=True)
     
-    personalizations = {
+    voice_id = data.get("voice_id")
+
+    voice_settings = {
         "speed": data.get("speed"),
-        "voice_id": data.get("voice_id"),
         "stability": data.get("stability"),
         "similarity_boost": data.get("similarity_boost"),
         "style": data.get("style"),
@@ -19,18 +21,21 @@ def start_session():
     }
 
     from elevenz import start_sound
-    path, file_name = start_sound(personalizations)
+    path, file_name = start_sound(voice_settings)
     try:
-        resp = make_response(
-            send_file(
-                path,
-                mimetype="audio/mpeg",
-                as_attachment=False,
-                download_name=file_name
-            )
+        return send_file(
+            path,
+            mimetype="audio/mpeg",
+            as_attachment=False,
+            download_name=file_name
         )
+
     except FileNotFoundError:
         abort(404, description="File not found")
+
+    file = Path(file_name)
+    file.unlink()
+
 
 @views.route('/api/pomodoro-end', methods=["POST"])
 def end_session():
@@ -60,6 +65,5 @@ def end_session():
 
 @views.route('/api/generate-notes', methods=["POST"])
 def generate_notes():
+    from flash_cards import get_flashcards
     pass
-
-def 

@@ -12,4 +12,4 @@ def create_app():
     from .views import views
 
 if __name__ == '__main__':
-    app.run(port=8000)
+    app.run(port=3000)
