@@ -11,7 +11,7 @@
         };
       in pkgs.mkShell {
         buildInputs = with pkgs; [
-          python312
+          python313
           # python310Packages.pandas
           # python310Packages.numpy
           # python312Packages.keyring

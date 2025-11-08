@@ -1,6 +1,6 @@
 from flask import Flask
-import json
 from flask_wtf import CSRFProtect
+from flask_cors import CORS
 
 csrf = CSRFProtect()
 
@@ -10,10 +10,14 @@ def create_app():
 
     csrf.init_app(app)
 
+    # Allow CORS everywhere for development. Restrict origins for production!
+    CORS(app, supports_credentials=True, origins="*")
+
     from views import views
+    app.register_blueprint(views)
 
     return app
 
 if __name__ == "__main__":
     app = create_app()
-    app.run(port=8000, debug=True)
+    app.run(port=8001, debug=True)
