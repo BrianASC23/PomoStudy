@@ -14,7 +14,7 @@ if not ELEVENLABS_API_KEY:
 set_api_key(ELEVENLABS_API_KEY)
 
 # Default configurations
-DEFAULT_VOICE_ID = "21m00Tcm4TlvDq8ikWAM"
+DEFAULT_VOICE_ID = "NcJuO1kJ19MefFnxN1Ls"
 DEFAULT_START_TEXT = "Pomodoro session starting now. Focus and be productive!"
 DEFAULT_END_TEXT = "Pomodoro session complete. Take a break and recharge!"
 DEFAULT_VOICE_SETTINGS = VoiceSettings(

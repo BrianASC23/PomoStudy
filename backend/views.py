@@ -21,7 +21,7 @@ def start_session():
     }
 
     from elevenz import start_sound
-    path, file_name = start_sound(voice_settings)
+    path, file_name = start_sound(voice_id=voice_id, voice_settings=voice_settings)
     try:
         return send_file(
             path,
