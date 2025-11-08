@@ -13,34 +13,80 @@ export function BackgroundAudio({ audioUrl }: BackgroundAudioProps) {
   const [volume, setVolume] = useState(0.5);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
+  // Initialize audio element when audioUrl changes
+  useEffect(() => {
+    if (!audioUrl) {
+      // Clean up if no audio URL
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+      setIsPlaying(false);
+      return;
+    }
+
+    const audio = new Audio(audioUrl);
+    audio.loop = true;
+    audio.volume = volume;
+    audioRef.current = audio;
+
+    // Set up event listeners
+    const handleEnded = () => {
+      // Restart playback when it ends (shouldn't happen with loop=true, but as backup)
+      if (isPlaying) {
+        audio.currentTime = 0;
+        audio.play().catch(console.error);
+      }
+    };
+
+    const handleLoad = () => {
+      // Auto-play if it was playing before URL change
+      if (isPlaying) {
+        audio.play().catch(console.error);
+      }
+    };
+
+    audio.addEventListener('ended', handleEnded);
+    audio.addEventListener('loadeddata', handleLoad);
+
+    return () => {
+      audio.removeEventListener('ended', handleEnded);
+      audio.removeEventListener('loadeddata', handleLoad);
+      audio.pause();
+    };
+  }, [audioUrl]); // Only depend on audioUrl
+
+  // Update volume when it changes
   useEffect(() => {
     if (audioRef.current) {
       audioRef.current.volume = volume;
     }
   }, [volume]);
 
+  // Reset playing state when audio URL changes
   useEffect(() => {
-    // Reset playing state when audio URL changes
     setIsPlaying(false);
   }, [audioUrl]);
 
-  const togglePlayPause = () => {
+  const togglePlayPause = async () => {
     if (!audioRef.current || !audioUrl) return;
 
-    if (isPlaying) {
-      audioRef.current.pause();
-    } else {
-      audioRef.current.play();
+    try {
+      if (isPlaying) {
+        audioRef.current.pause();
+        setIsPlaying(false);
+      } else {
+        await audioRef.current.play();
+        setIsPlaying(true);
+      }
+    } catch (error) {
+      console.error('Error toggling audio playback:', error);
+      setIsPlaying(false);
     }
-    setIsPlaying(!isPlaying);
   };
 
   const toggleMute = () => {
-    if (volume > 0) {
-      setVolume(0);
-    } else {
-      setVolume(0.5);
-    }
+    setVolume(volume > 0 ? 0 : 0.5);
   };
 
   if (!audioUrl) {
@@ -55,13 +101,6 @@ export function BackgroundAudio({ audioUrl }: BackgroundAudioProps) {
 
   return (
     <Card className="p-4">
-      <audio
-        ref={audioRef}
-        src={audioUrl}
-        loop
-        onEnded={() => setIsPlaying(false)}
-      />
-      
       <div className="flex items-center gap-3">
         <Button onClick={togglePlayPause} variant="outline" size="sm">
           {isPlaying ? (
@@ -92,6 +131,11 @@ export function BackgroundAudio({ audioUrl }: BackgroundAudioProps) {
         <span className="text-sm text-muted-foreground w-12 text-right">
           {Math.round(volume * 100)}%
         </span>
+      </div>
+      
+      {/* Display current status */}
+      <div className="mt-2 text-xs text-muted-foreground text-center">
+        {isPlaying ? 'Playing' : 'Paused'} • Background Audio
       </div>
     </Card>
   );
