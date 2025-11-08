@@ -11,4 +11,5 @@ def create_app():
 
     from .views import views
 
-    return app
+if __name__ == '__main__':
+    app.run(port=8000)

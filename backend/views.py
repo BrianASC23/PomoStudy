@@ -2,7 +2,7 @@ from flask import Blueprint, request, session, send_file, abort
 
 views = Blueprint("views",__name__)
 
-@views.route('/api/pomodoro-end', methods=["POST"])
+@views.route('/api/pomodoro-end', methods=["GET"])
 def get_end_sound():
     from elevenz import end_sound
     path, file_name = end_sound()
@@ -16,3 +16,16 @@ def get_end_sound():
     except FileNotFoundError:
         abort(404, description="Audio not found")
     
+@views.route('api/pomdero-start', methods=["GET"])
+def get_start_sound():
+    from elevenz import start_sound
+    path, file_name = start_sound()
+    try:
+        return send_file(
+            path,
+            mimetype="audio/mpeg",
+            as_attachment=False,
+            download_name=file_name
+        )
+    except FileNotFoundError:
+        abort(404, description="Audio not found")
