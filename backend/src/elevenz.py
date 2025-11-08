@@ -1,16 +1,13 @@
 import os
 from datetime import datetime
-import elevenlabs  # import the package, not just methods
+import elevenlabs
 from elevenlabs import Voice, VoiceSettings
 from dotenv import load_dotenv
 
-# Load environment variables
 load_dotenv()
 ELEVENLABS_API_KEY = os.getenv("ELEVENLABS_API_KEY")
 if not ELEVENLABS_API_KEY:
     raise ValueError("ELEVENLABS_API_KEY not found")
-
-# Modern way to set API key
 elevenlabs.api_key = ELEVENLABS_API_KEY
 
 DEFAULT_VOICE_ID = "NcJuO1kJ19MefFnxN1Ls"
@@ -24,23 +21,23 @@ DEFAULT_VOICE_SETTINGS = VoiceSettings(
 )
 
 def to_voice_settings(settings_dict):
-    """Convert a settings dict to a VoiceSettings object with fallbacks."""
+    """Convert camelCase or snake_case dict to VoiceSettings."""
     if not settings_dict:
         return DEFAULT_VOICE_SETTINGS
     return VoiceSettings(
-        stability=settings_dict.get("stability", DEFAULT_VOICE_SETTINGS.stability) if settings_dict.get("stability") is not None else DEFAULT_VOICE_SETTINGS.stability,
-        similarity_boost=settings_dict.get("similarity_boost", DEFAULT_VOICE_SETTINGS.similarity_boost) if settings_dict.get("similarity_boost") is not None else DEFAULT_VOICE_SETTINGS.similarity_boost,
-        style=settings_dict.get("style", DEFAULT_VOICE_SETTINGS.style) if settings_dict.get("style") is not None else DEFAULT_VOICE_SETTINGS.style,
-        use_speaker_boost=settings_dict.get("use_speaker_boost", DEFAULT_VOICE_SETTINGS.use_speaker_boost) if settings_dict.get("use_speaker_boost") is not None else DEFAULT_VOICE_SETTINGS.use_speaker_boost,
+        stability=settings_dict.get("stability", DEFAULT_VOICE_SETTINGS.stability),
+        similarity_boost=settings_dict.get("similarityBoost", settings_dict.get("similarity_boost", DEFAULT_VOICE_SETTINGS.similarity_boost)),
+        style=settings_dict.get("style", DEFAULT_VOICE_SETTINGS.style),
+        use_speaker_boost=settings_dict.get("speakerBoost", settings_dict.get("use_speaker_boost", DEFAULT_VOICE_SETTINGS.use_speaker_boost)),
     )
 
 def generate_audio(text, voice_id=DEFAULT_VOICE_ID, voice_settings=None):
+    from elevenlabs import generate
     try:
         voice = Voice(
-            voice_id=voice_id,
+            voice_id=voice_id or DEFAULT_VOICE_ID,
             settings=voice_settings or DEFAULT_VOICE_SETTINGS
         )
-
         audio = generate(
             text=text,
             voice=voice,
@@ -52,7 +49,7 @@ def generate_audio(text, voice_id=DEFAULT_VOICE_ID, voice_settings=None):
         return None
 
 def save_audio(audio_content, filename):
-    audio_dir = "audio_files"
+    audio_dir = os.path.join(os.path.dirname(__file__), '..', 'audio_files')
     os.makedirs(audio_dir, exist_ok=True)
     filepath = os.path.join(audio_dir, filename)
     try:

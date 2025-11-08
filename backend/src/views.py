@@ -1,17 +1,15 @@
-from flask import Blueprint, request, send_file, abort, make_response
+from flask import Blueprint, request, send_from_directory, make_response, jsonify, abort
 from main import csrf
-from pathlib import Path
 from elevenz import start_sound, end_sound, to_voice_settings
+import os
 
 views = Blueprint("views", __name__)
 
-# CATCH-ALL OPTIONS route for preflight (CORS)
-@views.route('/api/<path:dummy>', methods=['OPTIONS'])
-def options_dummy(dummy):
-    response = make_response('')
+@views.route('/audio_files/<path:filename>', methods=['GET'])
+def serve_audio_file(filename):
+    audio_dir = os.path.join(os.path.dirname(__file__), '..', 'audio_files')
+    response = send_from_directory(audio_dir, filename)
     response.headers['Access-Control-Allow-Origin'] = '*'
-    response.headers['Access-Control-Allow-Headers'] = 'Content-Type,Authorization'
-    response.headers['Access-Control-Allow-Methods'] = 'POST,OPTIONS'
     return response
 
 @views.route('/api/pomodoro-start', methods=["POST", "OPTIONS"])
@@ -25,28 +23,16 @@ def start_session():
         return response
 
     data = request.get_json(silent=True) or {}
-    voice_id = data.get("voice_id")
-    voice_settings_dict = {
-        "stability": data.get("stability"),
-        "similarity_boost": data.get("similarity_boost"),
-        "style": data.get("style"),
-        "use_speaker_boost": data.get("use_speaker_boost")
-    }
-    voice_settings = to_voice_settings(voice_settings_dict)
-    path, file_name = start_sound(voice_id=voice_id, voice_settings=voice_settings)
+    voice_id = data.get("voiceId") or data.get("voice_id")
+    voice_settings = data.get("voiceSettings") or {}
+    vs = to_voice_settings(voice_settings)
+    path, file_name = start_sound(voice_id=voice_id, voice_settings=vs)
     if not path:
         abort(404, description="Audio not generated.")
-    try:
-        response = send_file(
-            path,
-            mimetype="audio/mpeg",
-            as_attachment=False,
-            download_name=file_name
-        )
-        response.headers['Access-Control-Allow-Origin'] = '*'
-        return response
-    except FileNotFoundError:
-        abort(404, description="File not found")
+    url = request.host_url.rstrip("/") + "/audio_files/" + file_name
+    response = jsonify({"audioUrl": url})
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    return response
 
 @views.route('/api/pomodoro-end', methods=["POST", "OPTIONS"])
 @csrf.exempt
@@ -57,30 +43,17 @@ def end_session():
         response.headers['Access-Control-Allow-Headers'] = 'Content-Type,Authorization'
         response.headers['Access-Control-Allow-Methods'] = 'POST,OPTIONS'
         return response
-
     data = request.get_json(silent=True) or {}
-    voice_id = data.get("voice_id")
-    voice_settings_dict = {
-        "stability": data.get("stability"),
-        "similarity_boost": data.get("similarity_boost"),
-        "style": data.get("style"),
-        "use_speaker_boost": data.get("use_speaker_boost")
-    }
-    voice_settings = to_voice_settings(voice_settings_dict)
-    path, file_name = end_sound(voice_id=voice_id, voice_settings=voice_settings)
+    voice_id = data.get("voiceId") or data.get("voice_id")
+    voice_settings = data.get("voiceSettings") or {}
+    vs = to_voice_settings(voice_settings)
+    path, file_name = end_sound(voice_id=voice_id, voice_settings=vs)
     if not path:
         abort(404, description="Audio not generated.")
-    try:
-        response = send_file(
-            path,
-            mimetype="audio/mpeg",
-            as_attachment=False,
-            download_name=file_name
-        )
-        response.headers['Access-Control-Allow-Origin'] = '*'
-        return response
-    except FileNotFoundError:
-        abort(404, description="Audio not found")
+    url = request.host_url.rstrip("/") + "/audio_files/" + file_name
+    response = jsonify({"audioUrl": url})
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    return response
 
 # Skeleton for /api/generate-notes (not modified)
 @views.route('/api/generate-notes', methods=["POST"])

@@ -7,10 +7,8 @@ csrf = CSRFProtect()
 def create_app():
     app = Flask(__name__)
     app.config['SECRET_KEY'] = "SECRET_KEY"
-
     csrf.init_app(app)
-
-    # Allow CORS everywhere for development. Restrict origins for production!
+    # Allow CORS on all endpoints
     CORS(app, supports_credentials=True, origins="*")
 
     from views import views
