@@ -20,7 +20,7 @@ export const defaultAudioConfig: AudioConfig = {
 
 export async function fetchPomodoroStartAudio(config: AudioConfig = defaultAudioConfig): Promise<string | null> {
     try {
-        const resp = await fetch('http://localhost:4000/api/pomodoro-start', {
+        const resp = await fetch('http://localhost:8001/api/pomodoro-start', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(config),
@@ -36,7 +36,7 @@ export async function fetchPomodoroStartAudio(config: AudioConfig = defaultAudio
 
 export async function fetchPomodoroEndAudio(config: AudioConfig = defaultAudioConfig): Promise<string | null> {
     try {
-        const resp = await fetch('http://localhost:4000/api/pomodoro-end', {
+        const resp = await fetch('http://localhost:8001/api/pomodoro-end', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(config),
