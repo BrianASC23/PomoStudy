@@ -3,18 +3,14 @@ import hashlib, os
 
 views = Blueprint("views",__name__)
 
+# @views.route('/api/
     
-@views.route('/api/pomdero-start', methods=["POST"])
-def start():
+@views.route('/api/pomodoro-start', methods=["POST"])
+def start_session():
     data = request.get_json(silent=True)
-
-    voice_id = data.get("voice_id")
-    stability = data.get("stability")
-    similarity_boost = data.get("similarity_boost")
-    style = data.get("style")
-    use_speaker_boost = data.get("use_speaker_boost")
     
     personalizations = {
+        "speed": data.get("speed"),
         "voice_id": data.get("voice_id"),
         "stability": data.get("stability"),
         "similarity_boost": data.get("similarity_boost"),
@@ -34,10 +30,21 @@ def start():
             )
         )
     except FileNotFoundError:
-        abort(404, description="Audio not found")
+        abort(404, description="File not found")
 
 @views.route('/api/pomodoro-end', methods=["POST"])
-def end():
+def end_session():
+    data = request.get_json(silent=True)
+    
+    personalizations = {
+        "speed": data.get("speed"),
+        "voice_id": data.get("voice_id"),
+        "stability": data.get("stability"),
+        "similarity_boost": data.get("similarity_boost"),
+        "style": data.get("style"),
+        "use_speaker_boost": data.get("use_speaker_boost")
+    }
+
     from elevenz import end_sound
     path, file_name = end_sound()
     
@@ -50,3 +57,9 @@ def end():
         )
     except FileNotFoundError:
         abort(404, description="Audio not found")
+
+@views.route('/api/generate-notes', methods=["POST"])
+def generate_notes():
+    pass
+
+def 
