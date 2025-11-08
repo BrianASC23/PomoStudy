@@ -13,7 +13,7 @@ def create_app():
     # Allow CORS everywhere for development. Restrict origins for production!
     CORS(app, supports_credentials=True, origins="*")
 
-    from views import views
+    from backend.src.views import views
     app.register_blueprint(views)
 
     return app
