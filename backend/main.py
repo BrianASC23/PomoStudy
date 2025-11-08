@@ -1,6 +1,16 @@
-def main():
-    print("Hello from 2025hacks!")
+from flask import Flask
+import json
+import website.database
 
+with open("config.json","r") as config:
+    secret_key = (json.load(config)["secret_key"])
 
-if __name__ == "__main__":
-    main()
+def create_app():
+    app = Flask(__name__)
+    app.config['SECRET_KEY'] = secret_key
+
+    from .views import views
+
+    app.register_blueprint(views,url_prefix='/')
+
+    return app
