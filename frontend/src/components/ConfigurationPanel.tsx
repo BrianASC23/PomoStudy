@@ -102,8 +102,19 @@ export function ConfigurationPanel({
   const handleAudioFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      // Validate file type
+      if (!file.type.startsWith('audio/')) {
+        alert('Please select an audio file');
+        e.target.value = '';
+        return;
+      }
+      
+      // Create object URL for the uploaded file
       const url = URL.createObjectURL(file);
       onAudioUpload(url);
+      
+      // Clear the input to allow uploading the same file again
+      e.target.value = '';
     }
   };
 

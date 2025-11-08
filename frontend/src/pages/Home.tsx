@@ -6,6 +6,7 @@ import { Settings, Brain, Play, Pause, RotateCcw, MessageCircle, X } from 'lucid
 import type { Flashcard } from '../components/FlashcardViewer';
 import type { ChatMessage } from '../components/ChatMessage';
 import type { StudySettings } from '../types/settings';
+import { BackgroundAudio } from '../components/BackgroundAudio';
 
 const motivationalMessages = [
   "You're doing great! Keep up the amazing work!",
@@ -346,6 +347,11 @@ export function Home({ settings, onSettingsChange, onNavigate, audioStartUrl, au
             onToggle={() => onSettingsChange({ ...settings, voiceEnabled: !settings.voiceEnabled })}
             currentMessage={currentVoiceMessage}
           />
+        </div>
+
+        {/* Background Audio Controls - Bottom Center */}
+        <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 z-20 w-80">
+          <BackgroundAudio audioUrl={settings.audioUrl} />
         </div>
 
         {/* Chat Toggle Button - when chat is closed */}
