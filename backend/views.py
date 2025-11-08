@@ -1,12 +1,12 @@
 from flask import Blueprint, request, session, send_file, abort, jsonify
+from main import csrf
 import hashlib, os
 from pathlib import Path
 
 views = Blueprint("views",__name__)
 
-# @views.route('/api/
-    
 @views.route('/api/pomodoro-start', methods=["POST"])
+@csrf.exempt
 def start_session():
     data = request.get_json(silent=True)
     
@@ -38,12 +38,14 @@ def start_session():
 
 
 @views.route('/api/pomodoro-end', methods=["POST"])
+@csrf.exempt
 def end_session():
     data = request.get_json(silent=True)
     
-    personalizations = {
+    voice_id = data.get("voice_id")
+
+    voice_settings = {
         "speed": data.get("speed"),
-        "voice_id": data.get("voice_id"),
         "stability": data.get("stability"),
         "similarity_boost": data.get("similarity_boost"),
         "style": data.get("style"),
@@ -64,6 +66,7 @@ def end_session():
         abort(404, description="Audio not found")
 
 @views.route('/api/generate-notes', methods=["POST"])
+@csrf.exempt
 def generate_notes():
     from flash_cards import get_flashcards
     pass
