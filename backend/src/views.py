@@ -1,6 +1,7 @@
 from flask import Blueprint, request, send_from_directory, make_response, jsonify, abort
 from elevenz import start_sound, end_sound
 import os
+from werkzeug.utils import secure_filename
 
 views = Blueprint("views", __name__)
 
@@ -50,6 +51,44 @@ def end_session():
     response.headers['Access-Control-Allow-Origin'] = '*'
     return response
 
+def _check_ext(filename):
+    allowed = ["ppt","png","pdf","pptx","jpg","jpeg"]
+    return Path(filename).suffix.lower() in allowed
+
 @views.route('/api/generate-flashcards', methods=["POST"])
 def generate_flashcards():
-    pass
+    file = request.files.get("file")
+    if not file or file.filename == "":
+        return jsonify({"error": "no file given"}), 400
+
+    if not _allowed(file.filename):
+        return jsonify({"error": "unsupported file format"}), 415
+    
+    from services.gemini_client import generate_flashcards_from_file
+    safe_name = secure_filename(file.filename)
+    
+    try:
+        cards = generate_flash_from_file(file.stream, file.filename)
+    except Exception as e:
+        return jsonify({"error": "Failed to generate cards", "detail": str(e)}), 500
+
+    return jsonify(cards), 200
+
+@views.route('/api/generate-problems', methods=["POST"])
+def generate_problems():
+    file = request
+    if not file or file.filename == "":
+        return jsonify({"error": "no file given"}), 400
+
+    if not _allowed(file.filename):
+        return jsonify({"error": "unsupported file format"}), 415
+    
+    from services.gemini_client import generate_problems_from_file
+    safe_name = secure_filename(file.filename)
+    
+    try:
+        cards = generate_problems_from_file(file.stream, file.filename)
+    except Exception as e:
+        return jsonify({"error": "Failed to generate cards", "detail": str(e)}), 500
+
+    return jsonify(cards), 200
