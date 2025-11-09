@@ -73,3 +73,22 @@ def generate_flashcards():
         return jsonify({"error": "Failed to generate cards", "detail": str(e)}), 500
 
     return jsonify(cards), 200
+
+@views.route('/api/generate-problems', methods=["POST"])
+def generate_problems():
+    file = request
+    if not file or file.filename == "":
+        return jsonify({"error": "no file given"}), 400
+
+    if not _allowed(file.filename):
+        return jsonify({"error": "unsupported file format"}), 415
+    
+    from services.gemini_client import generate_problems_from_file
+    safe_name = secure_filename(file.filename)
+    
+    try:
+        cards = generate_problems_from_file(file.stream, file.filename)
+    except Exception as e:
+        return jsonify({"error": "Failed to generate cards", "detail": str(e)}), 500
+
+    return jsonify(cards), 200
