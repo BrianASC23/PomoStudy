@@ -97,13 +97,13 @@ export function Home({ settings, onSettingsChange, onNavigate, audioStartUrl, au
   }, [settings.studyVibe]);
 
   // Autostart timer on enter
-  useEffect(() => {
-    if (!timerActive) {
-      setTimerActive(true);
-      if (startAudioRef.current) playAudio(startAudioRef);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  // useEffect(() => {
+  //   if (!timerActive) {
+  //     setTimerActive(true);
+  //     if (startAudioRef.current) playAudio(startAudioRef);
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, []);
 
   const addMessage = (content: string, type: ChatMessage['type'] = 'text', flashcard?: { front: string; back: string }) => {
     const newMessage: ChatMessage = {
@@ -114,6 +114,11 @@ export function Home({ settings, onSettingsChange, onNavigate, audioStartUrl, au
       timestamp: new Date(),
       flashcard,
     };
+    if (content.includes("Great job") || content.includes("Amazing work")) {
+      playAudio(endAudioRef)
+    } else if (content.includes("Break's over")) {
+      playAudio(startAudioRef)
+    }
     setMessages((prev) => [...prev, newMessage]);
   };
 
@@ -125,28 +130,28 @@ export function Home({ settings, onSettingsChange, onNavigate, audioStartUrl, au
       const newCount = sessionCount + 1;
       setSessionCount(newCount);
 
-      if (endAudioRef.current) playAudio(endAudioRef);
+      // if (endAudioRef.current) playAudio(endAudioRef);
 
       if (newCount % 4 === 0) {
         setSessionType('break');
         setTimerSeconds(settings.longBreakDuration * 60);
-        addMessage(`🎉 Amazing work! You've completed 4 focus sessions. Time for a well-deserved ${settings.longBreakDuration}-minute long break!`, 'timer');
+        addMessage(`Amazing work! You've completed 4 focus sessions. Time for a well-deserved ${settings.longBreakDuration}-minute long break!`, 'timer');
       } else {
         setSessionType('break');
         setTimerSeconds(settings.shortBreakDuration * 60);
-        addMessage(`✨ Great job! Focus session complete. Take a ${settings.shortBreakDuration}-minute break to recharge.`, 'timer');
+        addMessage(`Great job! Focus session complete. Take a ${settings.shortBreakDuration}-minute break to recharge.`, 'timer');
       }
     } else {
       // just finished a break
-      if (endAudioRef.current) playAudio(endAudioRef);
+      // if (endAudioRef.current) playAudio(endAudioRef);
 
       setSessionType('work');
       setTimerSeconds(settings.workDuration * 60);
-      addMessage(`💪 Break's over! Ready to crush another ${settings.workDuration}-minute focus session? Let's do this!`, 'timer');
+      addMessage(`Break's over! Ready to crush another ${settings.workDuration}-minute focus session? Let's do this!`, 'timer');
     }
 
     // Start the next phase immediately
-    if (startAudioRef.current) playAudio(startAudioRef);
+    // if (startAudioRef.current) playAudio(startAudioRef);
     setTimerActive(true);
   };
 
@@ -192,7 +197,7 @@ export function Home({ settings, onSettingsChange, onNavigate, audioStartUrl, au
   const handlePlayPause = () => {
     setTimerActive((prev) => {
       const next = !prev;
-      if (next && startAudioRef.current) playAudio(startAudioRef);
+      // if (next && startAudioRef.current) playAudio(startAudioRef);
       return next;
     });
   };
