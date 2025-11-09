@@ -39,19 +39,30 @@ export function BackgroundAudio({ audioUrl }: BackgroundAudioProps) {
       }
     };
 
-    const handleLoad = () => {
-      // Auto-play if it was playing before URL change
-      if (isPlaying) {
-        audio.play().catch(console.error);
+    const handleCanPlayThrough = async () => {
+      // Auto-play when audio is loaded and ready
+      try {
+        await audio.play();
+        setIsPlaying(true);
+      } catch (error) {
+        console.error('Error auto-playing audio:', error);
+        setIsPlaying(false);
       }
     };
 
+    const handleError = (e: Event) => {
+      console.error('Error loading audio:', e);
+      setIsPlaying(false);
+    };
+
     audio.addEventListener('ended', handleEnded);
-    audio.addEventListener('loadeddata', handleLoad);
+    audio.addEventListener('canplaythrough', handleCanPlayThrough);
+    audio.addEventListener('error', handleError);
 
     return () => {
       audio.removeEventListener('ended', handleEnded);
-      audio.removeEventListener('loadeddata', handleLoad);
+      audio.removeEventListener('canplaythrough', handleCanPlayThrough);
+      audio.removeEventListener('error', handleError);
       audio.pause();
     };
   }, [audioUrl]); // Only depend on audioUrl
@@ -62,11 +73,6 @@ export function BackgroundAudio({ audioUrl }: BackgroundAudioProps) {
       audioRef.current.volume = volume;
     }
   }, [volume]);
-
-  // Reset playing state when audio URL changes
-  useEffect(() => {
-    setIsPlaying(false);
-  }, [audioUrl]);
 
   const togglePlayPause = async () => {
     if (!audioRef.current || !audioUrl) return;

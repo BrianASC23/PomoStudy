@@ -42,7 +42,7 @@ export default function App() {
       // Ensure voiceSettings exists for backwards compatibility
       if (!parsed.voiceSettings) {
         parsed.voiceSettings = {
-          voiceId: 'rachel',
+          voiceId: '21m00Tcm4TlvDq8ikWAM',
           speed: 1.0,
           stability: 0.5,
           similarity: 0.75,
@@ -61,7 +61,7 @@ export default function App() {
       voiceEnabled: true,
       studyVibe: 'rain',
       voiceSettings: {
-        voiceId: 'rachel',
+        voiceId: '21m00Tcm4TlvDq8ikWAM',
         speed: 1.0,
         stability: 0.5,
         similarity: 0.75,

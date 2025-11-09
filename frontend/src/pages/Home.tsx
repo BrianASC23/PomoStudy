@@ -19,11 +19,12 @@ const motivationalMessages = [
   "You're making excellent progress. Don't give up now!",
 ];
 
+// Update these to use the actual video paths from your onboarding
 const studyVibeVideos: Record<string, string> = {
-  rain: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
-  waves: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
-  cafe: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
-  whitenoise: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
+  rain: '../../public/rainwallpaper.mp4',
+  waves: '../../public/oceanwallpaper.mp4',
+  cafe: '../../public/coffeewallpaper.mp4',
+  whitenoise: '../../public/whitenoisewallpaper.mp4',
 };
 
 interface HomeProps {
@@ -80,6 +81,19 @@ export function Home({ settings, onSettingsChange, onNavigate, audioStartUrl, au
       }
     };
   }, [timerActive, timerSeconds]);
+
+  // Update video source when studyVibe changes
+  useEffect(() => {
+    if (videoRef.current) {
+      const videoUrl = studyVibeVideos[settings.studyVibe] || studyVibeVideos.rain;
+      videoRef.current.src = videoUrl;
+      videoRef.current.load();
+      videoRef.current.play().catch(() => {
+        // Autoplay might be blocked, but the video will be ready
+        console.log('Autoplay was prevented');
+      });
+    }
+  }, [settings.studyVibe]);
 
   // Autostart timer on enter
   useEffect(() => {
@@ -314,6 +328,7 @@ export function Home({ settings, onSettingsChange, onNavigate, audioStartUrl, au
           loop
           muted
           playsInline
+          key={settings.studyVibe} // Add key to force re-render when vibe changes
         />
 
         {/* Overlay gradient for better text visibility */}

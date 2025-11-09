@@ -10,6 +10,8 @@ interface OnboardingProps {
     shortBreakDuration: number;
     longBreakDuration: number;
     studyVibe: string;
+    audioUrl: string;
+    backgroundVideo: string;
   }) => void;
 }
 
@@ -19,28 +21,32 @@ const studyVibes = [
     name: 'Rainy Day',
     description: 'Cozy cafe with rain sounds',
     icon: Cloud,
-    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4', // Placeholder
+    audioUrl: '../../public/rainnoise.mp3',
+    backgroundVideo: '../../public/rainwallpaper.mp4',
   },
   {
     id: 'waves',
     name: 'Ocean Waves',
     description: 'Study by the seaside',
     icon: Waves,
-    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4', // Placeholder
+    audioUrl: '../../public/oceannoise.mp3',
+    backgroundVideo: '../../public/oceanwallpaper.mp4',
   },
   {
     id: 'cafe',
     name: 'Cafe Ambience',
     description: 'Busy coffee shop atmosphere',
     icon: Coffee,
-    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4', // Placeholder
+    audioUrl: '../../public/coffeenoise.mp3',
+    backgroundVideo: '../../public/coffeewallpaper.mp4',
   },
   {
     id: 'whitenoise',
     name: 'White Noise',
     description: 'Calm white noise background',
     icon: Wind,
-    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4', // Placeholder
+    audioUrl: '../../public/whitenoise.mp3',
+    backgroundVideo: '../../public/whitenoisewallpaper.mp4',
   },
 ];
 
@@ -52,17 +58,31 @@ export function Onboarding({ onComplete }: OnboardingProps) {
   const [selectedVibe, setSelectedVibe] = useState('rain');
 
   const handleComplete = () => {
+    const selectedVibeData = studyVibes.find(vibe => vibe.id === selectedVibe);
     onComplete({
       workDuration,
       shortBreakDuration,
       longBreakDuration,
       studyVibe: selectedVibe,
+      audioUrl: selectedVibeData?.audioUrl || '',
+      backgroundVideo: selectedVibeData?.backgroundVideo || '',
     });
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center p-4">
-      <Card className="w-full max-w-2xl p-8">
+      {/* Background Video */}
+      <video
+        autoPlay
+        muted
+        loop
+        className="absolute inset-0 w-full h-full object-cover opacity-20"
+      >
+        <source src="../../public/rain-video.mp4" type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
+
+      <Card className="w-full max-w-2xl p-8 relative z-10">
         {/* Header */}
         <div className="text-center mb-8">
           <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
