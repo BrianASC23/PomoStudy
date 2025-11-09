@@ -53,33 +53,34 @@ export function Home({ settings, onSettingsChange, onNavigate, audioStartUrl, au
   const playAudio = (ref: React.RefObject<HTMLAudioElement>) => {
     if (ref.current) {
       ref.current.currentTime = 0;
-      ref.current.play().catch(() => { });
+      ref.current.play().catch(() => { /* autoplay might be blocked */ });
     }
   };
 
-  // Timer logic
+  // --- Timer ticking: only decrement while active; no completion logic here ---
   useEffect(() => {
-    if (timerActive && timerSeconds > 0) {
-      timerRef.current = setInterval(() => {
-        setTimerSeconds((prev) => {
-          if (prev <= 1) {
-            handleTimerComplete();
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-    } else {
-      if (timerRef.current) {
-        clearInterval(timerRef.current);
-      }
-    }
+    if (!timerActive) return;
+
+    timerRef.current = setInterval(() => {
+      setTimerSeconds((prev) => prev - 1);
+    }, 1000);
 
     return () => {
       if (timerRef.current) {
         clearInterval(timerRef.current);
+        timerRef.current = null;
       }
     };
+  }, [timerActive]);
+
+  // --- Completion watcher: when time hits 0 or below, finalize the phase ---
+  useEffect(() => {
+    if (!timerActive) return;
+    if (timerSeconds > 0) return;
+
+    // Clamp to 0 for display, then complete the session
+    setTimerSeconds(0);
+    handleTimerComplete();
   }, [timerActive, timerSeconds]);
 
   // Update video source when studyVibe changes
@@ -101,7 +102,7 @@ export function Home({ settings, onSettingsChange, onNavigate, audioStartUrl, au
       setTimerActive(true);
       if (startAudioRef.current) playAudio(startAudioRef);
     }
-    // eslint-disable-next-line
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const addMessage = (content: string, type: ChatMessage['type'] = 'text', flashcard?: { front: string; back: string }) => {
@@ -117,44 +118,36 @@ export function Home({ settings, onSettingsChange, onNavigate, audioStartUrl, au
   };
 
   const handleTimerComplete = () => {
+    // stop current ticking interval before switching phases
     setTimerActive(false);
 
     if (sessionType === 'work') {
       const newCount = sessionCount + 1;
       setSessionCount(newCount);
 
-      // Play END audio for work phase
       if (endAudioRef.current) playAudio(endAudioRef);
 
       if (newCount % 4 === 0) {
         setSessionType('break');
         setTimerSeconds(settings.longBreakDuration * 60);
         addMessage(`🎉 Amazing work! You've completed 4 focus sessions. Time for a well-deserved ${settings.longBreakDuration}-minute long break!`, 'timer');
-        setTimeout(() => {
-          setTimerActive(true);
-          if (startAudioRef.current) playAudio(startAudioRef);
-        }, 1000);
       } else {
         setSessionType('break');
         setTimerSeconds(settings.shortBreakDuration * 60);
         addMessage(`✨ Great job! Focus session complete. Take a ${settings.shortBreakDuration}-minute break to recharge.`, 'timer');
-        setTimeout(() => {
-          setTimerActive(true);
-          if (startAudioRef.current) playAudio(startAudioRef);
-        }, 1000);
       }
     } else {
-      // Just finished a break, play break-end audio
+      // just finished a break
       if (endAudioRef.current) playAudio(endAudioRef);
 
       setSessionType('work');
       setTimerSeconds(settings.workDuration * 60);
       addMessage(`💪 Break's over! Ready to crush another ${settings.workDuration}-minute focus session? Let's do this!`, 'timer');
-      setTimeout(() => {
-        setTimerActive(true);
-        if (startAudioRef.current) playAudio(startAudioRef);
-      }, 1000);
     }
+
+    // Start the next phase immediately
+    if (startAudioRef.current) playAudio(startAudioRef);
+    setTimerActive(true);
   };
 
   const handleSendMessage = (content: string) => {
@@ -197,10 +190,11 @@ export function Home({ settings, onSettingsChange, onNavigate, audioStartUrl, au
   };
 
   const handlePlayPause = () => {
-    setTimerActive(!timerActive);
-    if (!timerActive) {
-      if (startAudioRef.current) playAudio(startAudioRef);
-    }
+    setTimerActive((prev) => {
+      const next = !prev;
+      if (next && startAudioRef.current) playAudio(startAudioRef);
+      return next;
+    });
   };
 
   const handleRestart = () => {
@@ -208,13 +202,15 @@ export function Home({ settings, onSettingsChange, onNavigate, audioStartUrl, au
     if (sessionType === 'work') {
       setTimerSeconds(settings.workDuration * 60);
     } else {
+      // Default to short break on restart while in break mode
       setTimerSeconds(settings.shortBreakDuration * 60);
     }
   };
 
   const formatTime = (totalSeconds: number) => {
-    const minutes = Math.floor(totalSeconds / 60);
-    const seconds = totalSeconds % 60;
+    const safe = Math.max(0, totalSeconds);
+    const minutes = Math.floor(safe / 60);
+    const seconds = safe % 60;
     return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
   };
 
@@ -240,38 +236,25 @@ export function Home({ settings, onSettingsChange, onNavigate, audioStartUrl, au
           {/* Center - Session Info, Timer & Controls */}
           <div className="flex items-center gap-4">
             {/* Session Type Badge */}
-            <div className={`px-2 py-1 rounded-full text-xs ${sessionType === 'work'
-                ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300'
-                : 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300'
-              }`}>
+            <div
+              className={`px-2 py-1 rounded-full text-xs ${
+                sessionType === 'work'
+                  ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300'
+                  : 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300'
+              }`}
+            >
               {sessionType === 'work' ? '🎯 Focus' : '☕ Break'} • Session {sessionCount + 1}
             </div>
 
             {/* Timer Display */}
-            <div className="text-xl tabular-nums">
-              {formatTime(timerSeconds)}
-            </div>
+            <div className="text-xl tabular-nums">{formatTime(timerSeconds)}</div>
 
             {/* Timer Controls */}
             <div className="flex items-center gap-1">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handlePlayPause}
-                className="h-8 w-8 p-0"
-              >
-                {timerActive ? (
-                  <Pause className="h-4 w-4" />
-                ) : (
-                  <Play className="h-4 w-4" />
-                )}
+              <Button variant="ghost" size="sm" onClick={handlePlayPause} className="h-8 w-8 p-0">
+                {timerActive ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
               </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleRestart}
-                className="h-8 w-8 p-0"
-              >
+              <Button variant="ghost" size="sm" onClick={handleRestart} className="h-8 w-8 p-0">
                 <RotateCcw className="h-4 w-4" />
               </Button>
             </div>
@@ -337,12 +320,7 @@ export function Home({ settings, onSettingsChange, onNavigate, audioStartUrl, au
                 </div>
                 <span>Study Assistant</span>
               </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setChatOpen(false)}
-                className="h-8 w-8 p-0"
-              >
+              <Button variant="ghost" size="sm" onClick={() => setChatOpen(false)} className="h-8 w-8 p-0">
                 <X className="h-4 w-4" />
               </Button>
             </div>
@@ -357,3 +335,4 @@ export function Home({ settings, onSettingsChange, onNavigate, audioStartUrl, au
     </div>
   );
 }
+
