@@ -28,16 +28,7 @@ interface ConfigurationPanelProps {
 }
 
 const voiceOptions = [
-  { id: 'adam', name: 'Adam - Deep' },
-  { id: 'rachel', name: 'Rachel - Calm' },
-  { id: 'domi', name: 'Domi - Strong' },
-  { id: 'bella', name: 'Bella - Soft' },
-  { id: 'antoni', name: 'Antoni - Friendly' },
-  { id: 'elli', name: 'Elli - Energetic' },
-  { id: 'josh', name: 'Josh - Professional' },
-  { id: 'arnold', name: 'Arnold - Crisp' },
-  { id: 'callum', name: 'Callum - Warm' },
-  { id: 'charlie', name: 'Charlie - Casual' },
+  { id: '21m00Tcm4TlvDq8ikWAM', name: 'Adam - Deep' },
 ];
 
 export function ConfigurationPanel({

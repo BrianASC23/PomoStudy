@@ -40,6 +40,7 @@ export async function fetchPomodoroStartAudio(
         });
         if (!resp.ok) throw new Error('Failed to fetch start audio');
         const data = await resp.json();
+        console.log(data);
         return data.audioUrl as string;
     } catch (err) {
         console.error('Start audio fetch error:', err);
@@ -58,6 +59,7 @@ export async function fetchPomodoroEndAudio(
         });
         if (!resp.ok) throw new Error('Failed to fetch end audio');
         const data = await resp.json();
+        console.log(data);
         return data.audioUrl as string;
     } catch (err) {
         console.error('End audio fetch error:', err);

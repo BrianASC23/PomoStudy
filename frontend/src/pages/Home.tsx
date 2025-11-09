@@ -90,23 +90,6 @@ export function Home({ settings, onSettingsChange, onNavigate, audioStartUrl, au
     // eslint-disable-next-line
   }, []);
 
-  const speak = (text: string) => {
-    if (!settings.voiceEnabled || !('speechSynthesis' in window)) return;
-
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.rate = 0.9;
-    utterance.pitch = 1.0;
-    utterance.volume = 0.8;
-
-    setCurrentVoiceMessage(text);
-    window.speechSynthesis.speak(utterance);
-
-    utterance.onend = () => {
-      setTimeout(() => setCurrentVoiceMessage(''), 2000);
-    };
-  };
-
   const addMessage = (content: string, type: ChatMessage['type'] = 'text', flashcard?: { front: string; back: string }) => {
     const newMessage: ChatMessage = {
       id: Date.now().toString() + Math.random(),
@@ -117,10 +100,6 @@ export function Home({ settings, onSettingsChange, onNavigate, audioStartUrl, au
       flashcard,
     };
     setMessages((prev) => [...prev, newMessage]);
-
-    if (settings.voiceEnabled) {
-      speak(content);
-    }
   };
 
   const handleTimerComplete = () => {
