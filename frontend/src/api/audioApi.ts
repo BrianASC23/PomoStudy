@@ -8,7 +8,7 @@ export interface AudioConfig {
 }
 
 export const defaultAudioConfig: AudioConfig = {
-    voiceId: 'rachel',
+    voiceId: '21m00Tcm4TlvDq8ikWAM',
     speed: 1.0,
     stability: 0.5,
     similarity: 0.75,
