@@ -23,7 +23,7 @@ GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 if GOOGLE_API_KEY:
     genai.configure(api_key=GOOGLE_API_KEY)
 
-DEFAULT_MODEL = "gemini-1.5-flash"  # or "gemini-1.5-pro" for better quality
+DEFAULT_MODEL = "gemini-2.5-flash"  # Latest stable flash model
 
 
 def extract_text_from_pdf(file_path: str) -> str:

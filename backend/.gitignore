@@ -1,2 +1,5 @@
 .env
 audio_files
+venv
+test*
+TEST*

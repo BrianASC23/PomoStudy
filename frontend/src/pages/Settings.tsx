@@ -1,5 +1,6 @@
 import { ConfigurationPanel } from '../components/ConfigurationPanel';
 import { BackgroundAudio } from '../components/BackgroundAudio';
+import { FlashcardUpload } from '../components/FlashcardUpload';
 import { Button } from '../components/ui/button';
 import { ArrowLeft, Brain } from 'lucide-react';
 import type { StudySettings } from '../types/settings';
@@ -62,6 +63,11 @@ export function Settings({ settings, onSettingsChange, onNavigate }: SettingsPro
             onSettingsChange({ ...settings, voiceSettings })
           }
         />
+
+        {/* Flashcard Upload Section */}
+        <div className="mt-8">
+          <FlashcardUpload />
+        </div>
 
         {/* Current Background Audio Preview */}
         {settings.audioUrl && (
