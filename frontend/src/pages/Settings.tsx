@@ -65,15 +65,6 @@ export function Settings({ settings, onSettingsChange, onNavigate }: SettingsPro
             onSettingsChange({ ...settings, voiceSettings })
           }
         />
-
-
-        {/* Current Background Audio Preview */}
-        {settings.audioUrl && (
-          <div className="mt-8">
-            <h3 className="text-lg font-medium mb-4">Current Background Audio</h3>
-            <BackgroundAudio audioUrl={settings.audioUrl} />
-          </div>
-        )}
       </div>
     </div>
   );
