@@ -12,6 +12,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from './ui/collap
 import { X, Plus, ChevronDown } from 'lucide-react';
 import type { Flashcard } from './FlashcardViewer';
 import type { VoiceSettings } from '../types/settings';
+import { FlashcardUpload } from '../components/FlashcardUpload';
 
 interface ConfigurationPanelProps {
   workDuration: number;
@@ -165,84 +166,9 @@ export function ConfigurationPanel({
 
         <TabsContent value="flashcards" className="space-y-4">
           <Card className="p-4 space-y-4">
-            <div>
-              <h3 className="mb-3">Add Single Flashcard</h3>
-              <div className="space-y-3">
-                <div className="space-y-2">
-                  <Label htmlFor="card-front">Question (Front)</Label>
-                  <Input
-                    id="card-front"
-                    placeholder="Enter question..."
-                    value={newCardFront}
-                    onChange={(e) => setNewCardFront(e.target.value)}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="card-back">Answer (Back)</Label>
-                  <Input
-                    id="card-back"
-                    placeholder="Enter answer..."
-                    value={newCardBack}
-                    onChange={(e) => setNewCardBack(e.target.value)}
-                  />
-                </div>
-
-                <Button onClick={handleAddFlashcard} className="w-full">
-                  <Plus className="mr-2 h-4 w-4" />
-                  Add Flashcard
-                </Button>
-              </div>
-            </div>
-
-            <div className="border-t pt-4">
-              <h3 className="mb-3">Bulk Import</h3>
-              <div className="space-y-2">
-                <Label htmlFor="bulk-import">
-                  One card per line, use | to separate question and answer
-                </Label>
-                <Textarea
-                  id="bulk-import"
-                  placeholder="Question 1 | Answer 1&#10;Question 2 | Answer 2&#10;Question 3 | Answer 3"
-                  value={bulkImport}
-                  onChange={(e) => setBulkImport(e.target.value)}
-                  rows={5}
-                />
-                <Button onClick={handleBulkImport} variant="secondary" className="w-full">
-                  Import Cards
-                </Button>
-              </div>
-            </div>
-
-            <div className="border-t pt-4">
-              <h3 className="mb-3">Current Flashcards ({flashcards.length})</h3>
-              <div className="space-y-2 max-h-60 overflow-y-auto">
-                {flashcards.length === 0 ? (
-                  <div className="text-sm text-muted-foreground text-center py-4">
-                    No flashcards yet. Add some above!
-                  </div>
-                ) : (
-                  flashcards.map((card) => (
-                    <div
-                      key={card.id}
-                      className="flex items-start gap-2 p-2 rounded border bg-card"
-                    >
-                      <div className="flex-1 text-sm">
-                        <div className="truncate">Q: {card.front}</div>
-                        <div className="text-muted-foreground truncate">A: {card.back}</div>
-                      </div>
-                      <Button
-                        onClick={() => handleRemoveFlashcard(card.id)}
-                        variant="ghost"
-                        size="sm"
-                      >
-                        <X className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  ))
-                )}
-              </div>
-            </div>
+          <div className="mt-8">
+            <FlashcardUpload flashcards={flashcards} onFlashcardsChange={onFlashcardsChange} />
+          </div>
           </Card>
         </TabsContent>
 

@@ -3,6 +3,7 @@ from elevenz import start_sound, end_sound
 import os
 from pathlib import Path
 from werkzeug.utils import secure_filename
+from services.flashcard_service import generate_flashcards_from_upload, generate_flashcards_from_raw_text, validate_file
 
 views = Blueprint("views", __name__)
 
@@ -87,7 +88,6 @@ def generate_flashcards():
             return jsonify({"error": "Count must be between 1 and 50"}), 400
 
         # Import the service functions
-        from services.flashcard_service import generate_flashcards_from_upload, generate_flashcards_from_raw_text, validate_file
 
         # Case 1: Text input
         if text_input:

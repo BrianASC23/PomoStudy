@@ -126,8 +126,8 @@ Generate {count} flashcards as a JSON array:"""
             for card in flashcards:
                 if isinstance(card, dict) and 'question' in card and 'answer' in card:
                     validated.append({
-                        'question': str(card['question']).strip(),
-                        'answer': str(card['answer']).strip()
+                        'front': str(card['question']).strip(),
+                        'back': str(card['answer']).strip()
                     })
 
             return validated[:count]
@@ -138,8 +138,8 @@ Generate {count} flashcards as a JSON array:"""
             for card in flashcards:
                 if isinstance(card, dict) and 'question' in card and 'answer' in card:
                     validated.append({
-                        'question': str(card['question']).strip(),
-                        'answer': str(card['answer']).strip()
+                        'front': str(card['question']).strip(),
+                        'back': str(card['answer']).strip()
                     })
             return validated[:count]
 

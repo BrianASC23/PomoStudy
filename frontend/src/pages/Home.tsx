@@ -172,32 +172,7 @@ export function Home({ settings, onSettingsChange, onNavigate, audioStartUrl, au
     setTimeout(() => {
       const lowerContent = content.toLowerCase();
 
-      if (lowerContent.includes('start') || lowerContent.includes('begin') || lowerContent.includes('focus')) {
-        if (!timerActive) {
-          setTimerActive(true);
-          setSessionType('work');
-          setTimerSeconds(settings.workDuration * 60);
-          addMessage(`🚀 Let's get started! Your ${settings.workDuration}-minute focus session is now active. I'll be here to keep you motivated!`, 'timer');
-          if (startAudioRef.current) playAudio(startAudioRef);
-        } else {
-          addMessage("You already have an active session! Keep going, you're doing great!", 'text');
-        }
-      } else if (lowerContent.includes('stop') || lowerContent.includes('pause')) {
-        if (timerActive) {
-          setTimerActive(false);
-          addMessage("Session paused. Take a moment if you need it, but remember your goals! Type 'resume' when you're ready.", 'text');
-        } else {
-          addMessage("No active session to pause. Type 'start' when you want to begin!", 'text');
-        }
-      } else if (lowerContent.includes('resume') || lowerContent.includes('continue')) {
-        if (!timerActive && timerSeconds > 0) {
-          setTimerActive(true);
-          addMessage("Welcome back! Resuming your session. Let's finish strong! 💪", 'text');
-          if (startAudioRef.current) playAudio(startAudioRef);
-        } else {
-          addMessage("Type 'start' to begin a new focus session!", 'text');
-        }
-      } else if (lowerContent.includes('flashcard') || lowerContent.includes('quiz') || lowerContent.includes('review')) {
+      if (lowerContent.includes('flashcard') || lowerContent.includes('quiz') || lowerContent.includes('review')) {
         if (settings.flashcards.length > 0) {
           const randomCard = settings.flashcards[Math.floor(Math.random() * settings.flashcards.length)];
           addMessage("Here's a flashcard to review! Click on it to flip between question and answer.", 'flashcard', {
@@ -210,13 +185,6 @@ export function Home({ settings, onSettingsChange, onNavigate, audioStartUrl, au
       } else if (lowerContent.includes('motivate') || lowerContent.includes('encourage') || lowerContent.includes('help')) {
         const randomMotivation = motivationalMessages[Math.floor(Math.random() * motivationalMessages.length)];
         addMessage(randomMotivation, 'motivation');
-      } else if (lowerContent.includes('status') || lowerContent.includes('time')) {
-        const minutes = Math.floor(timerSeconds / 60);
-        const seconds = timerSeconds % 60;
-        const statusMessage = timerActive
-          ? `⏱️ Current ${sessionType} session: ${minutes}:${String(seconds).padStart(2, '0')} remaining. You're on session ${sessionCount + 1}!`
-          : "No active session. Type 'start' to begin a focus session!";
-        addMessage(statusMessage, 'text');
       } else {
         const responses = [
           "I'm here to help you study! You can ask me to 'start' a session, show a 'flashcard', give you 'motivation', or check your 'status'.",

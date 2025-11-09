@@ -18,13 +18,20 @@ interface FlashcardResponse {
   filename?: string;
 }
 
-export const FlashcardUpload: React.FC = () => {
+interface FlashcardUploadProps {
+  flashcards: Flashcard[];
+  onFlashcardsChange: (flashcards: Flashcard[]) => void;
+}
+
+export const FlashcardUpload: React.FC = ({
+  flashcards,
+  onFlashcardsChange,
+}: FlashcardUploadProps) => {
   const [file, setFile] = useState<File | null>(null);
   const [count, setCount] = useState<number>(10);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
-  const [flashcards, setFlashcards] = useState<Flashcard[]>([]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
@@ -63,7 +70,8 @@ export const FlashcardUpload: React.FC = () => {
       }
 
       const data: FlashcardResponse = await response.json();
-      setFlashcards(data.flashcards);
+      console.log(data);
+      onFlashcardsChange(data.flashcards);
       setSuccess(true);
       
       // Clear the file input after successful upload
@@ -166,7 +174,7 @@ export const FlashcardUpload: React.FC = () => {
             <Alert className="mt-4 bg-green-50 border-green-200">
               <CheckCircle className="h-4 w-4 text-green-600" />
               <AlertDescription className="text-green-800">
-                Successfully generated {flashcards.length} flashcard{flashcards.length !== 1 ? 's' : ''}!
+                Keep up the good work! {flashcards.length} flashcard{flashcards.length !== 1 ? 's' : ''}!
               </AlertDescription>
             </Alert>
           )}
@@ -191,13 +199,13 @@ export const FlashcardUpload: React.FC = () => {
                         <p className="text-sm font-semibold text-muted-foreground mb-1">
                           Question {index + 1}:
                         </p>
-                        <p className="font-medium">{card.question}</p>
+                        <p className="font-medium">{card.front}</p>
                       </div>
                       <div>
                         <p className="text-sm font-semibold text-muted-foreground mb-1">
                           Answer:
                         </p>
-                        <p className="text-sm">{card.answer}</p>
+                        <p className="text-sm">{card.back}</p>
                       </div>
                     </div>
                   </CardContent>

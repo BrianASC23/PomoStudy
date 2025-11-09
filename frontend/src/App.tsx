@@ -12,24 +12,6 @@ import {
   fetchPomodoroEndAudio
 } from './api/audioApi';
 
-const defaultFlashcards: Flashcard[] = [
-  {
-    id: '1',
-    front: 'What is the Pomodoro Technique?',
-    back: 'A time management method using 25-minute focused work intervals followed by short breaks.'
-  },
-  {
-    id: '2',
-    front: 'What is spaced repetition?',
-    back: 'A learning technique that incorporates increasing intervals of time between reviews of previously learned material.'
-  },
-  {
-    id: '3',
-    front: 'Why are breaks important when studying?',
-    back: 'Breaks help prevent mental fatigue, improve focus, and enhance long-term retention of information.'
-  }
-];
-
 export default function App() {
   const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState(() => {
     return localStorage.getItem('hasCompletedOnboarding') === 'true';
@@ -56,7 +38,7 @@ export default function App() {
       workDuration: 25,
       shortBreakDuration: 5,
       longBreakDuration: 15,
-      flashcards: defaultFlashcards,
+      flashcards: [],
       audioUrl: null,
       voiceEnabled: true,
       studyVibe: 'rain',
