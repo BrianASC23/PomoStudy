@@ -21,10 +21,10 @@ const motivationalMessages = [
 
 // Update these to use the actual video paths from your onboarding
 const studyVibeVideos: Record<string, string> = {
-  rain: '../../public/rainwallpaper.mp4',
-  waves: '../../public/oceanwallpaper.mp4',
-  cafe: '../../public/coffeewallpaper.mp4',
-  whitenoise: '../../public/whitenoisewallpaper.mp4',
+  rain: 'rainwallpaper.mp4',
+  waves: 'oceanwallpaper.mp4',
+  cafe: 'coffeewallpaper.mp4',
+  whitenoise: 'whitenoisewallpaper.mp4',
 };
 
 interface HomeProps {

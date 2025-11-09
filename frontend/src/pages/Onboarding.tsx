@@ -21,32 +21,32 @@ const studyVibes = [
     name: 'Rainy Day',
     description: 'Cozy cafe with rain sounds',
     icon: Cloud,
-    audioUrl: '../../public/rainnoise.mp3',
-    backgroundVideo: '../../public/rainwallpaper.mp4',
+    audioUrl: 'rainnoise.mp3',
+    backgroundVideo: 'rainwallpaper.mp4',
   },
   {
     id: 'waves',
     name: 'Ocean Waves',
     description: 'Study by the seaside',
     icon: Waves,
-    audioUrl: '../../public/oceannoise.mp3',
-    backgroundVideo: '../../public/oceanwallpaper.mp4',
+    audioUrl: 'oceannoise.mp3',
+    backgroundVideo: 'oceanwallpaper.mp4',
   },
   {
     id: 'cafe',
     name: 'Cafe Ambience',
     description: 'Busy coffee shop atmosphere',
     icon: Coffee,
-    audioUrl: '../../public/coffeenoise.mp3',
-    backgroundVideo: '../../public/coffeewallpaper.mp4',
+    audioUrl: 'coffeenoise.mp3',
+    backgroundVideo: 'coffeewallpaper.mp4',
   },
   {
     id: 'whitenoise',
     name: 'White Noise',
     description: 'Calm white noise background',
     icon: Wind,
-    audioUrl: '../../public/whitenoise.mp3',
-    backgroundVideo: '../../public/whitenoisewallpaper.mp4',
+    audioUrl: 'whitenoise.mp3',
+    backgroundVideo: 'whitenoisewallpaper.mp4',
   },
 ];
 
@@ -78,7 +78,7 @@ export function Onboarding({ onComplete }: OnboardingProps) {
         loop
         className="absolute inset-0 w-full h-full object-cover opacity-20"
       >
-        <source src="../../public/rain-video.mp4" type="video/mp4" />
+        <source src="rain-video.mp4" type="video/mp4" />
         Your browser does not support the video tag.
       </video>
 
