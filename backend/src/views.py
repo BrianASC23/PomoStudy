@@ -68,7 +68,7 @@ def generate_flashcards():
     safe_name = secure_filename(file.filename)
     
     try:
-        cards = get_card(file.stream, file.filename)
+        cards = generate_flash_from_file(file.stream, file.filename)
     except Exception as e:
         return jsonify({"error": "Failed to generate cards", "detail": str(e)}), 500
 
