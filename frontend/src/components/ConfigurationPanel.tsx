@@ -28,7 +28,7 @@ interface ConfigurationPanelProps {
 }
 
 const voiceOptions = [
-  { id: '21m00Tcm4TlvDq8ikWAM', name: 'Adam - Deep' },
+  { id: '21m00Tcm4TlvDq8ikWAM', name: 'Rachel' },
 ];
 
 export function ConfigurationPanel({
