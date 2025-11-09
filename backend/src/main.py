@@ -7,6 +7,8 @@ csrf = CSRFProtect()
 def create_app():
     app = Flask(__name__)
     app.config['SECRET_KEY'] = "SECRET_KEY"
+    app.config['UPLOAD_FOLDER'] = "Uploads"
+
     csrf.init_app(app)
     # Allow CORS on all endpoints
     CORS(app, supports_credentials=True, origins="*")
