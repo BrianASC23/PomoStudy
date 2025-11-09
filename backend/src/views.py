@@ -1,6 +1,5 @@
 from flask import Blueprint, request, send_from_directory, make_response, jsonify, abort
-from main import csrf
-from elevenz import start_sound, end_sound, to_voice_settings
+from elevenz import start_sound, end_sound
 import os
 
 views = Blueprint("views", __name__)
@@ -13,7 +12,6 @@ def serve_audio_file(filename):
     return response
 
 @views.route('/api/pomodoro-start', methods=["POST", "OPTIONS"])
-@csrf.exempt
 def start_session():
     if request.method == 'OPTIONS':
         response = make_response('')
@@ -25,8 +23,7 @@ def start_session():
     data = request.get_json(silent=True) or {}
     voice_id = data.get("voiceId") or data.get("voice_id")
     voice_settings = data.get("voiceSettings") or {}
-    vs = to_voice_settings(voice_settings)
-    path, file_name = start_sound(voice_id=voice_id, voice_settings=vs)
+    path, file_name = start_sound(voice_id=voice_id)
     if not path:
         abort(404, description="Audio not generated.")
     url = request.host_url.rstrip("/") + "/audio_files/" + file_name
@@ -35,7 +32,6 @@ def start_session():
     return response
 
 @views.route('/api/pomodoro-end', methods=["POST", "OPTIONS"])
-@csrf.exempt
 def end_session():
     if request.method == 'OPTIONS':
         response = make_response('')
@@ -46,8 +42,7 @@ def end_session():
     data = request.get_json(silent=True) or {}
     voice_id = data.get("voiceId") or data.get("voice_id")
     voice_settings = data.get("voiceSettings") or {}
-    vs = to_voice_settings(voice_settings)
-    path, file_name = end_sound(voice_id=voice_id, voice_settings=vs)
+    path, file_name = end_sound(voice_id=voice_id)
     if not path:
         abort(404, description="Audio not generated.")
     url = request.host_url.rstrip("/") + "/audio_files/" + file_name
@@ -57,7 +52,6 @@ def end_session():
 
 # Skeleton for /api/generate-notes (not modified)
 @views.route('/api/generate-notes', methods=["POST"])
-@csrf.exempt
 def generate_notes():
     from flash_cards import get_flashcards
     pass
