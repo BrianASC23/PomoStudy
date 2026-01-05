@@ -44,7 +44,7 @@ Many productivity apps focus only on time management, while many study apps focu
 
 ## Tech Stack (Planned)
 
-- Frontend: Next.js
+- Frontend: Typescript
 - Backend: Flask
 - AI / NLP: Gemini API (for flashcard generation)
 
@@ -83,3 +83,4 @@ This project is currently in the design and prototyping phase.
 Brian Cao  
 Computer Science Student  
 Stony Brook University
+
